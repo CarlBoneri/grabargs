@@ -1,13 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<style>
-table th, table td{
-    padding: 0px 4px !important;
-    border: 3px solid #ddd !important;
-}
-</style>
-
 # grabargs
 
 <p align="center">
