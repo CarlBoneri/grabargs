@@ -1,0 +1,13 @@
+Package: grabargs
+Type: Package
+Title: Allows collection of large numbers of arguments or unset dots within a function.
+Version: 0.1.0
+Authors@R: person("Carl", "Boneri", email = "cboneri@gmail.com", role = c("aut", "cre")) 
+Maintainer: Carl Boneri <cboneri@gmail.com>
+Description: The function collects all arguments that come before it in a calling environment; ie a function 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+URL: https://github.com/CarlBoneri/grabargs
+BugReports: https://github.com/CarlBoneri/grabargs/issues

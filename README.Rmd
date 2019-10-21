@@ -12,40 +12,65 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
+
+<style>
+table th, table td{
+    padding: 0px 4px !important;
+    border: 3px solid #ddd !important;
+}
+</style>
+
+
 # grabargs
 
-A very small package with only one real purpose, to import the `grab_args` function
+<p align="center">
+  <img src="./inst/grabby.gif" width="448" height="384" />
+</p>
+
+A very small package with only one real purpose: to import the `grab_args` function
 into any package or *Shiny App*. I got tired of importing this function into all my
 private packages, so deploying as a package itself. 
 
 ## Installation
 
-You can install the released version of grabargs from [GitHub]() with:
+You can install the released version of grabargs from [GitHub](https://github.com/CarlBoneri/grabargs) with:
 
-``` r
-install.packages("grabargs")
+```{r, echo=TRUE, eval=FALSE}
+devtools::install_github("CarlBoneri/grabargs")
 ```
 
-## Example
+## Why this function is helpful  
 
-This is a basic example which shows you how to solve a common problem:
+Let's say you have a function with a ton of optional arguments. A good example is 
+when building an **API** and the query params are mostly optional. Let's use twitter
+as an example for [searching tweets](https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets).
 
-```{r example}
-## basic example code
+I'm not in the mood to write out all the params, so let's parse the doc:
+
+```{r paged.print=TRUE}
+library(xml2)
+
+raw_page <- xml2::read_html("https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets")
+
+params_table <- xml_find_all(raw_page, ".//h2[contains(.,'Parameters')]//following-sibling::table") %>%
+  rvest::html_table() %>% .[[1]] %>%  dplyr::rename_all(function(x){
+    tolower(x) %>% gsub("(\\s+)", "_", ., perl = TRUE)
+  })
+
+# The description column is making this thing wrap way too much, so gonna truncate:
+# 
+params_table$description <- lapply(params_table$description, function(i){
+    r <- stri_split_regex(i, "(?<=\\.|\\!|\\?)(\\s+)") %>% unlist()
+    if(length(r) > 1){
+        stri_join(r[1:2], collapse = " ")
+    }else {
+        r
+    }
+}) %>% unlist
+
+knitr::kable(params_table %>% select(-default_value), align = "l")
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 
-```{r cars}
-summary(cars)
-```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
