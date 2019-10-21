@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # grabargs
 
 <p align="center">
-  <img src="./inst/grabby.gif" width="448" height="384" />
+  <img src="./inst/grabby.gif" width="448" height="384" alt="hi, kitten" title="hi, kitten" />
 </p>
 
 A very small package with only one real purpose: to import the `grab_args` function

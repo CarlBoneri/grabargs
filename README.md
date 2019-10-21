@@ -5,7 +5,7 @@
 
 <p align="center">
 
-<img src="./inst/grabby.gif" width="448" height="384" />
+<img src="./inst/grabby.gif" width="448" height="384" alt="hi, kitten" title="hi, kitten" />
 
 </p>
 
