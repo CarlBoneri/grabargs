@@ -64,5 +64,56 @@ knitr::kable(params_table %>% select(-default_value), align = "l")
 ```
 
 
+---
+
+So our function would want to allow the user to pass all the params, but testing for each would be a pain, because
+there are `r nrow(params_table)` possible params. For instance:
+
+```{r}
+params_table$name
+```
+
+Here's what our function would look like if we did have to check for each 
+**(please note this is an example, we would need to check for auth tokens etc in a real scenario, and that httr will actually drop NULL values in query lists)**:
+
+```{r}
+t.search_test <- function(q = NULL, geocode = NULL, lang = NULL, locale = NULL, result_type = c("mixed", "recent", "popular"), 
+                          count = 100, until = NULL, since_id = NULL, max_id = NULL, include_entities = FALSE){
+  
+  # Notice we have to build a full list of objects and perform another step cleaning...
+  query <- list(q = q, geocode = geocode, lang = lang, locale = locale, result_type = match.arg(result_type),
+                count = count, until = until, since_id = since_id, max_id = max_id, include_entities = include_entities)
+  
+  query <- query[!mapply(is.null, query)]
+  
+  query
+}
+
+t.search_test()
+
+```
+
+*VS*
+
+```{r include=FALSE}
+source("R/grab_args.R")
+```
+
+```{r}
+t.search_test2 <- function(q = NULL, geocode = NULL, lang = NULL, locale = NULL, result_type = c("mixed", "recent", "popular"), 
+                           count = 100, until = NULL, since_id = NULL, max_id = NULL, include_entities = FALSE){
+  
+  query <- grab_args_clean()
+  
+  
+  query
+  
+}
+t.search_test2()
+```
+
+---
+
+As you can see this has shortened our manual process greatly, as well as given us a cleaner approach. 
 
 

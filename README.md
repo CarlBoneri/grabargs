@@ -68,3 +68,75 @@ knitr::kable(params_table %>% select(-default_value), align = "l")
 | since\_id         | optional | Returns results with an ID greater than (that is, more recent than) the specified ID. There are limits to the number of Tweets which can be accessed through the API.                              | 12345                     |
 | max\_id           | optional | Returns results with an ID less than (that is, older than) or equal to the specified ID.                                                                                                           | 54321                     |
 | include\_entities | optional | The entities node will not be included when set to false.                                                                                                                                          | false                     |
+
+-----
+
+So our function would want to allow the user to pass all the params, but
+testing for each would be a pain, because there are 10 possible params.
+For instance:
+
+``` r
+params_table$name
+#>  [1] "q"                "geocode"          "lang"            
+#>  [4] "locale"           "result_type"      "count"           
+#>  [7] "until"            "since_id"         "max_id"          
+#> [10] "include_entities"
+```
+
+Here’s what our function would look like if we did have to check for
+each **(please note this is an example, we would need to check for auth
+tokens etc in a real scenario, and that httr will actually drop NULL
+values in query
+lists)**:
+
+``` r
+t.search_test <- function(q = NULL, geocode = NULL, lang = NULL, locale = NULL, result_type = c("mixed", "recent", "popular"), 
+                          count = 100, until = NULL, since_id = NULL, max_id = NULL, include_entities = FALSE){
+  
+  # Notice we have to build a full list of objects and perform another step cleaning...
+  query <- list(q = q, geocode = geocode, lang = lang, locale = locale, result_type = match.arg(result_type),
+                count = count, until = until, since_id = since_id, max_id = max_id, include_entities = include_entities)
+  
+  query <- query[!mapply(is.null, query)]
+  
+  query
+}
+
+t.search_test()
+#> $result_type
+#> [1] "mixed"
+#> 
+#> $count
+#> [1] 100
+#> 
+#> $include_entities
+#> [1] FALSE
+```
+
+*VS*
+
+``` r
+t.search_test2 <- function(q = NULL, geocode = NULL, lang = NULL, locale = NULL, result_type = c("mixed", "recent", "popular"), 
+                           count = 100, until = NULL, since_id = NULL, max_id = NULL, include_entities = FALSE){
+  
+  query <- grab_args_clean()
+  
+  
+  query
+  
+}
+t.search_test2()
+#> $result_type
+#> [1] "mixed"
+#> 
+#> $count
+#> [1] 100
+#> 
+#> $include_entities
+#> [1] FALSE
+```
+
+-----
+
+As you can see this has shortened our manual process greatly, as well as
+given us a cleaner approach.
